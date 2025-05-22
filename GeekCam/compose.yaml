@@ -1,9 +1,8 @@
 services:
   geek_cam_yolo:
     # YOLO統合玄関訪問者認識システム
-    image: zha_container:use
-    container_name: geek_cam_yolo_system
-    command: bash -c 'export PATH="$PATH:/usr/local/cuda/bin" && export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/lib64" && /app/start_system.sh'
+    image: zha_ollama:latest
+    command: bash -c 'export PATH="$PATH:/usr/local/cuda/bin" && export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/lib64" && /bin/bash'
     volumes:
       # システムファイル
       - /home/nyancat/workspace/llm/ZHA/GeekCam:/app/geek_cam
@@ -17,6 +16,12 @@ services:
       - ./faces:/app/geek_cam/faces
       # キャプチャ画像保存用
       - ./captures:/app/geek_cam/captures
+      - /home/nyancat/ws:/app #実行ファイルのマウント
+      - /tmp/argus_socket:/tmp/argus_socket # socket通信用のマウント？　なんだっけ、、、？
+      - /dev:/dev #全てのデバイスのマウント
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw #X11socketのマウント 
+      # Xauthorityの認証情報
+      - ${HOME}/.Xauthority:/tmp/.Xauthority:ro
     devices:
       # カメラデバイス
       - "/dev/video0:/dev/video0"
@@ -26,6 +31,7 @@ services:
       # Web UI
       - "8080:8080"
     runtime: nvidia
+    privileged: True
     stdin_open: true
     tty: true
     environment:

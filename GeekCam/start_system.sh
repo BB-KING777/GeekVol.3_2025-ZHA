@@ -37,7 +37,7 @@ if [ ! -d "/app/geek_cam/runs" ]; then
 fi
 
 # Python環境のセットアップ
-cd /app/geek_cam
+cd /app/geek/GeekVol.3_2025/GeekCam
 
 # YOLOの基本モデルをダウンロード（存在しない場合）
 if [ ! -f "model/yolo11n.pt" ]; then
