@@ -1,9 +1,10 @@
 """
-Webインターフェース - Flask アプリケーション
+Webインターフェース - Flask アプリケーション（完全修正版）
 """
 import cv2
 import time
 import threading
+import numpy as np
 from flask import Flask, request, jsonify, Response
 from datetime import datetime
 
@@ -14,60 +15,182 @@ from main_system import SystemController
 app = Flask(__name__)
 app.secret_key = "geekcamp_visitor_recognition_2024"
 
-# システムコントローラー
+# グローバル変数
 system_controller = SystemController()
 stream_active = True
+current_frame = None
+frame_lock = threading.Lock()
 
-def generate_video_stream():
-    """MJPEG ビデオストリーム生成"""
-    global stream_active
+def frame_capture_thread():
+    """動作する最終版フレームキャプチャ"""
+    global current_frame
+    
+    print("フレームキャプチャスレッド開始")
+    success_count = 0
+    last_frame_time = 0
     
     while stream_active:
         try:
-            if system_controller.is_initialized:
-                frame = system_controller.system.get_current_frame()
-                
-                if frame:
-                    # JPEG エンコード
-                    _, buffer = cv2.imencode('.jpg', frame.image, [
-                        cv2.IMWRITE_JPEG_QUALITY, 80
-                    ])
-                    frame_bytes = buffer.tobytes()
-                    
-                    # MJPEG フォーマット
-                    yield (b'--frame\r\n'
-                           b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-                else:
-                    # プレースホルダー画像
-                    placeholder = create_placeholder_image("カメラフィードなし")
-                    _, buffer = cv2.imencode('.jpg', placeholder)
-                    frame_bytes = buffer.tobytes()
-                    
-                    yield (b'--frame\r\n'
-                           b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-            else:
-                # システム未初期化
-                placeholder = create_placeholder_image("システム初期化中...")
-                _, buffer = cv2.imencode('.jpg', placeholder)
-                frame_bytes = buffer.tobytes()
-                
-                yield (b'--frame\r\n'
-                       b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+            current_time = time.time()
             
-            # フレームレート調整
+            if system_controller.is_initialized:
+                # フレームレート制限を一時的に無効化して取得を試行
+                original_last_time = system_controller.system.camera_manager.last_frame_time
+                system_controller.system.camera_manager.last_frame_time = 0
+                
+                # フレーム取得
+                frame = system_controller.system.camera_manager.get_frame()
+                
+                # フレームレート制限を復元
+                system_controller.system.camera_manager.last_frame_time = original_last_time
+                
+                if frame and frame.image is not None:
+                    with frame_lock:
+                        current_frame = frame.image.copy()
+                    success_count += 1
+                    last_frame_time = current_time
+                    
+                    if success_count % 30 == 0:
+                        print(f"✓ フレーム取得成功: {success_count}回")
+                
+                # フレーム取得失敗時のフォールバック
+                elif current_time - last_frame_time > 2.0:  # 2秒間取得できない場合
+                    try:
+                        # 直接カメラから取得
+                        camera_manager = system_controller.system.camera_manager
+                        if config.USE_CAMERA and camera_manager.camera and camera_manager.camera.isOpened():
+                            ret, direct_frame = camera_manager.camera.read()
+                            if ret and direct_frame is not None:
+                                # タイムスタンプ追加
+                                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                                cv2.putText(direct_frame, timestamp, (10, direct_frame.shape[0] - 10), 
+                                           cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+                                
+                                with frame_lock:
+                                    current_frame = direct_frame.copy()
+                                success_count += 1
+                                last_frame_time = current_time
+                                print("フォールバック: 直接カメラから取得成功")
+                        
+                        elif not config.USE_CAMERA and camera_manager.test_images:
+                            # テスト画像から取得
+                            test_frame = camera_manager.test_images[camera_manager.current_test_index].copy()
+                            camera_manager.current_test_index = (camera_manager.current_test_index + 1) % len(camera_manager.test_images)
+                            
+                            # タイムスタンプ追加
+                            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                            cv2.putText(test_frame, timestamp, (10, test_frame.shape[0] - 10), 
+                                       cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+                            
+                            with frame_lock:
+                                current_frame = test_frame.copy()
+                            success_count += 1
+                            last_frame_time = current_time
+                            print("フォールバック: テスト画像から取得成功")
+                    except Exception as e:
+                        print(f"フォールバック取得エラー: {e}")
+                        
+        except Exception as e:
+            print(f"フレームキャプチャエラー: {e}")
+        
+        # 適切な間隔で待機
+        time.sleep(0.1)
+    
+    print("フレームキャプチャスレッド終了")
+
+def generate_video_stream():
+    """MJPEG ビデオストリーム生成（修正版）"""
+    global stream_active, current_frame
+    
+    frame_count = 0
+    last_frame_time = time.time()
+    
+    while stream_active:
+        try:
+            frame_to_send = None
+            
+            # 現在のフレームを安全に取得
+            with frame_lock:
+                if current_frame is not None:
+                    frame_to_send = current_frame.copy()
+            
+            if frame_to_send is not None:
+                # 正常なフレームの場合
+                success, buffer = cv2.imencode('.jpg', frame_to_send, [
+                    cv2.IMWRITE_JPEG_QUALITY, 75
+                ])
+                
+                if success:
+                    frame_bytes = buffer.tobytes()
+                    frame_count += 1
+                    
+                    # FPS計算とデバッグ出力
+                    current_time = time.time()
+                    if current_time - last_frame_time >= 5.0:  # 5秒ごと
+                        fps = frame_count / (current_time - last_frame_time)
+                        print(f"ストリームFPS: {fps:.1f}, フレーム送信: {frame_count}")
+                        frame_count = 0
+                        last_frame_time = current_time
+                else:
+                    raise Exception("JPEG encode failed")
+            else:
+                # フレームがない場合のプレースホルダー
+                placeholder = create_placeholder_image("カメラ接続中...")
+                success, buffer = cv2.imencode('.jpg', placeholder, [
+                    cv2.IMWRITE_JPEG_QUALITY, 75
+                ])
+                if success:
+                    frame_bytes = buffer.tobytes()
+                else:
+                    raise Exception("Placeholder encode failed")
+            
+            # MJPEG フォーマット出力
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+            
+            # フレームレート制御
             time.sleep(1.0 / config.FRAME_RATE)
             
         except Exception as e:
-            print(f"ビデオストリームエラー: {e}")
+            print(f"ストリームエラー: {e}")
+            try:
+                # エラー時のフォールバック
+                error_img = create_placeholder_image(f"エラー")
+                _, buffer = cv2.imencode('.jpg', error_img)
+                frame_bytes = buffer.tobytes()
+                yield (b'--frame\r\n'
+                       b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+            except:
+                pass
             time.sleep(0.5)
 
 def create_placeholder_image(text: str):
     """プレースホルダー画像作成"""
-    import numpy as np
+    img = np.ones((config.CAMERA_HEIGHT, config.CAMERA_WIDTH, 3), dtype=np.uint8) * 200
     
-    img = np.ones((config.CAMERA_HEIGHT, config.CAMERA_WIDTH, 3), dtype=np.uint8) * 240
-    cv2.putText(img, text, (50, config.CAMERA_HEIGHT // 2),
-                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
+    # テキスト描画
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    font_scale = 1.0
+    thickness = 2
+    
+    # テキストサイズ計算
+    try:
+        (text_width, text_height), _ = cv2.getTextSize(text, font, font_scale, thickness)
+        
+        # 中央配置
+        x = max(10, (config.CAMERA_WIDTH - text_width) // 2)
+        y = max(30, (config.CAMERA_HEIGHT + text_height) // 2)
+        
+        cv2.putText(img, text, (x, y), font, font_scale, (0, 0, 0), thickness)
+        
+        # タイムスタンプ
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        cv2.putText(img, timestamp, (10, 30), font, 0.6, (100, 100, 100), 2)
+    except Exception as e:
+        print(f"プレースホルダー作成エラー: {e}")
+        # 最小限の画像
+        cv2.putText(img, "Camera", (250, 240), font, 1, (0, 0, 0), 2)
+    
     return img
 
 # === Webルート ===
@@ -357,6 +480,12 @@ def index():
             }}
         }};
         
+        // エラーハンドリング
+        videoStream.onerror = function() {{
+            console.error('ビデオストリーム読み込みエラー');
+            fpsCounter.textContent = 'エラー';
+        }};
+        
         // 呼び鈴ボタン
         doorbellButton.addEventListener('click', function() {{
             if (isProcessing) return;
@@ -448,6 +577,10 @@ def index():
         // 定期更新
         setInterval(updateStatus, 1000);
         updateStatus();
+        
+        // デバッグ情報
+        console.log('Web app initialized');
+        console.log('Video stream URL:', '/video_feed');
     </script>
 </body>
 </html>
@@ -460,7 +593,12 @@ def video_feed():
     """ビデオストリーム"""
     return Response(
         generate_video_stream(),
-        mimetype='multipart/x-mixed-replace; boundary=frame'
+        mimetype='multipart/x-mixed-replace; boundary=frame',
+        headers={
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        }
     )
 
 @app.route('/api/status')
@@ -470,15 +608,52 @@ def api_status():
 
 @app.route('/api/doorbell', methods=['POST'])
 def api_doorbell():
-    """呼び鈴API"""
+    """呼び鈴API（修正版）"""
     try:
         data = request.get_json() or {}
         time_offset = data.get('time_offset', 0.0)
         
-        result = system_controller.doorbell_pressed(time_offset)
-        return jsonify(result)
+        # 現在フレームの直接取得
+        global current_frame
+        analysis_frame = None
+        
+        with frame_lock:
+            if current_frame is not None:
+                analysis_frame = current_frame.copy()
+                print(f"分析用フレーム取得成功: {analysis_frame.shape}")
+        
+        if analysis_frame is None:
+            # フォールバック: システムから直接取得
+            if system_controller.is_initialized:
+                frame = system_controller.system.camera_manager.get_frame()
+                if frame and frame.image is not None:
+                    analysis_frame = frame.image.copy()
+                    print(f"フォールバック分析用フレーム取得: {analysis_frame.shape}")
+        
+        if analysis_frame is None:
+            print("分析用フレーム取得失敗")
+            return jsonify({
+                "success": False,
+                "message": "分析用の画像を取得できませんでした"
+            })
+        
+        # 通常の分析処理を実行（非同期）
+        def run_analysis():
+            try:
+                result = system_controller.doorbell_pressed(time_offset)
+                print(f"分析結果: {result}")
+            except Exception as e:
+                print(f"分析処理エラー: {e}")
+        
+        threading.Thread(target=run_analysis, daemon=True).start()
+        
+        return jsonify({
+            "success": True,
+            "message": "訪問者分析を開始しました"
+        })
         
     except Exception as e:
+        print(f"呼び鈴API エラー: {e}")
         return jsonify({
             "success": False,
             "message": f"処理エラー: {str(e)}"
@@ -508,8 +683,32 @@ def api_speak():
 def api_capture():
     """画像保存API"""
     try:
-        result = system_controller.save_current_frame()
-        return jsonify(result)
+        global current_frame
+        
+        # 現在フレームを取得
+        with frame_lock:
+            if current_frame is not None:
+                save_frame = current_frame.copy()
+            else:
+                save_frame = None
+        
+        if save_frame is None:
+            return jsonify({
+                "success": False,
+                "message": "保存する画像がありません"
+            })
+        
+        # 画像保存
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"manual_capture_{timestamp}.jpg"
+        filepath = config.CAPTURES_DIR / filename
+        
+        cv2.imwrite(str(filepath), save_frame)
+        
+        return jsonify({
+            "success": True,
+            "message": filename
+        })
         
     except Exception as e:
         return jsonify({
@@ -532,12 +731,32 @@ def api_shutdown():
 
 def run_web_app():
     """Webアプリケーション起動"""
+    global current_frame, stream_active
+    
     try:
         # システム初期化
         print("システムを初期化中...")
         if not system_controller.initialize():
             print("システムの初期化に失敗しました")
             return False
+        
+        # フレームキャプチャスレッド開始
+        print("フレームキャプチャスレッドを開始...")
+        capture_thread = threading.Thread(target=frame_capture_thread, daemon=True)
+        capture_thread.start()
+        
+        # 初期フレーム取得確認
+        print("初期フレーム取得テスト...")
+        test_count = 0
+        while test_count < 10 and current_frame is None:
+            time.sleep(0.5)
+            test_count += 1
+            print(f"フレーム待機中... ({test_count}/10)")
+        
+        if current_frame is not None:
+            print(f"✓ フレーム取得成功: {current_frame.shape}")
+        else:
+            print("⚠ 初期フレーム取得失敗（ストリームは継続）")
         
         print(f"Webサーバーを起動中... http://{config.WEB_HOST}:{config.WEB_PORT}")
         
@@ -547,7 +766,7 @@ def run_web_app():
             port=config.WEB_PORT,
             debug=config.DEBUG_MODE,
             threaded=True,
-            use_reloader=False  # リローダーを無効化（重複初期化防止）
+            use_reloader=False
         )
         
     except KeyboardInterrupt:
@@ -556,7 +775,6 @@ def run_web_app():
         print(f"Webアプリケーションエラー: {e}")
     finally:
         # クリーンアップ
-        global stream_active
         stream_active = False
         system_controller.shutdown()
         print("システムを終了しました")

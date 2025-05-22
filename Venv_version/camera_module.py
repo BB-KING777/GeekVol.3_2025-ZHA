@@ -1,5 +1,5 @@
 """
-カメラ管理モジュール - プラットフォーム非依存
+カメラ管理モジュール - 修正版（動作していたコードを基に改良）
 """
 import cv2
 import time
@@ -16,7 +16,7 @@ from models import CameraFrame
 logger = logging.getLogger(__name__)
 
 class CameraManager:
-    """カメラとテスト画像の統一管理"""
+    """カメラとテスト画像の統一管理 - 修正版"""
     
     def __init__(self):
         self.camera = None
@@ -31,63 +31,106 @@ class CameraManager:
         """カメラまたはテスト画像の初期化"""
         try:
             if config.USE_CAMERA:
-                return self._start_camera()
+                return self._start_camera_simple()
             else:
                 return self._load_test_images()
         except Exception as e:
             logger.error(f"カメラ初期化エラー: {e}")
             return False
     
-    def _start_camera(self) -> bool:
-        """カメラ初期化"""
+    def _start_camera_simple(self) -> bool:
+        """シンプルなカメラ初期化（動作していたコードを基に）"""
         try:
-            # プラットフォーム別のカメラ設定
-            if config.IS_WINDOWS:
-                self.camera = cv2.VideoCapture(config.CAMERA_ID, cv2.CAP_DSHOW)
-            else:
-                self.camera = cv2.VideoCapture(config.CAMERA_ID)
+            # 複数の方法を順番に試行
+            camera_configs = [
+                # 方法1: シンプルな初期化（元のコード）
+                (config.CAMERA_ID, None),
+                # 方法2: DirectShow指定
+                (config.CAMERA_ID, cv2.CAP_DSHOW),
+                # 方法3: 別のカメラID
+                (0, None),
+                (1, None),
+            ]
             
-            if not self.camera.isOpened():
-                logger.error(f"カメラ {config.CAMERA_ID} を開けませんでした")
-                return False
+            for camera_id, backend in camera_configs:
+                try:
+                    logger.info(f"カメラテスト: ID={camera_id}, Backend={backend}")
+                    
+                    if backend is None:
+                        self.camera = cv2.VideoCapture(camera_id)
+                    else:
+                        self.camera = cv2.VideoCapture(camera_id, backend)
+                    
+                    if not self.camera.isOpened():
+                        if self.camera:
+                            self.camera.release()
+                        continue
+                    
+                    # カメラ設定（元のコードと同じ）
+                    self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, config.CAMERA_WIDTH)
+                    self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, config.CAMERA_HEIGHT)
+                    
+                    # テストフレーム取得
+                    ret, frame = self.camera.read()
+                    if not ret or frame is None:
+                        self.camera.release()
+                        continue
+                    
+                    self.is_running = True
+                    logger.info(f"カメラ初期化成功: ID={camera_id}, Backend={backend}")
+                    logger.info(f"フレームサイズ: {frame.shape[1]}x{frame.shape[0]}")
+                    return True
+                    
+                except Exception as e:
+                    logger.warning(f"カメラ設定失敗 ID={camera_id}, Backend={backend}: {e}")
+                    if self.camera:
+                        self.camera.release()
+                        self.camera = None
+                    continue
             
-            # カメラ設定
-            self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, config.CAMERA_WIDTH)
-            self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, config.CAMERA_HEIGHT)
-            self.camera.set(cv2.CAP_PROP_FPS, 30)
-            
-            # テストフレーム取得
-            ret, frame = self.camera.read()
-            if not ret:
-                logger.error("テストフレームの取得に失敗")
-                return False
-            
-            self.is_running = True
-            logger.info("カメラ初期化成功")
-            return True
+            logger.error("すべてのカメラ設定が失敗しました")
+            return False
             
         except Exception as e:
             logger.error(f"カメラ初期化エラー: {e}")
             return False
     
     def _load_test_images(self) -> bool:
-        """テスト画像読み込み"""
+        """テスト画像読み込み（元のコードを改良）"""
         try:
             self.test_images = []
             test_dir = config.TEST_IMAGES_DIR
             
+            # ディレクトリが存在しない場合は作成
+            if not test_dir.exists():
+                test_dir.mkdir(parents=True)
+                logger.info(f"テスト画像ディレクトリを作成: {test_dir}")
+            
             # 画像ファイルを探す
             image_extensions = ['.jpg', '.jpeg', '.png', '.bmp']
+            found_images = []
+            
             for ext in image_extensions:
                 for image_path in test_dir.glob(f"*{ext}"):
+                    found_images.append(image_path)
+                for image_path in test_dir.glob(f"*{ext.upper()}"):
+                    found_images.append(image_path)
+            
+            # 画像を読み込み
+            for image_path in found_images:
+                try:
                     image = cv2.imread(str(image_path))
                     if image is not None:
                         self.test_images.append(image)
                         logger.info(f"テスト画像読み込み: {image_path.name}")
+                except Exception as e:
+                    logger.warning(f"画像読み込み失敗 {image_path.name}: {e}")
             
-            # テスト画像がない場合は作成
+            # テスト画像がない場合はサンプルを作成
             if not self.test_images:
+                logger.info("テスト画像が見つからないため、サンプルを作成します")
                 self._create_sample_images()
+                
                 # 再読み込み
                 for ext in image_extensions:
                     for image_path in test_dir.glob(f"*{ext}"):
@@ -97,10 +140,10 @@ class CameraManager:
             
             if self.test_images:
                 self.is_running = True
-                logger.info(f"{len(self.test_images)}枚のテスト画像を読み込み")
+                logger.info(f"{len(self.test_images)}枚のテスト画像を読み込みました")
                 return True
             else:
-                logger.error("テスト画像が見つかりません")
+                logger.error("テスト画像の読み込みに失敗しました")
                 return False
                 
         except Exception as e:
@@ -108,24 +151,24 @@ class CameraManager:
             return False
     
     def _create_sample_images(self):
-        """サンプル画像作成"""
+        """サンプル画像作成（元のコードを改良）"""
         logger.info("サンプル画像を作成中...")
         
         samples = [
             {
-                "name": "delivery_person.jpg",
+                "name": "test_delivery.jpg",
                 "color": (0, 0, 200),  # 赤い制服
                 "text": "Delivery Person",
                 "has_package": True
             },
             {
-                "name": "business_person.jpg", 
+                "name": "test_visitor.jpg", 
                 "color": (50, 50, 50),  # 黒いスーツ
-                "text": "Business Person",
+                "text": "Business Visitor",
                 "has_package": False
             },
             {
-                "name": "postal_worker.jpg",
+                "name": "test_postman.jpg",
                 "color": (0, 120, 255),  # オレンジ制服
                 "text": "Postal Worker", 
                 "has_package": True
@@ -133,7 +176,8 @@ class CameraManager:
         ]
         
         for sample in samples:
-            img = np.ones((config.CAMERA_HEIGHT, config.CAMERA_WIDTH, 3), dtype=np.uint8) * 255
+            # キャンバス作成
+            img = np.ones((config.CAMERA_HEIGHT, config.CAMERA_WIDTH, 3), dtype=np.uint8) * 240
             
             # 人物シルエット
             cv2.rectangle(img, (200, 100), (440, 400), sample["color"], -1)
@@ -141,20 +185,26 @@ class CameraManager:
             cv2.circle(img, (320, 150), 50, (200, 180, 140), -1)
             # パッケージ（必要な場合）
             if sample["has_package"]:
-                cv2.rectangle(img, (250, 250), (390, 300), (200, 200, 200), -1)
+                cv2.rectangle(img, (250, 250), (390, 300), (150, 150, 150), -1)
+                cv2.putText(img, "Package", (260, 280), 
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
             
             # テキスト
-            cv2.putText(img, sample["text"], (220, 50), 
+            cv2.putText(img, sample["text"], (180, 50), 
                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
+            
+            # タイムスタンプ
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            cv2.putText(img, f"Sample: {timestamp}", (10, 30), 
+                       cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 128, 0), 2)
             
             # 保存
             save_path = config.TEST_IMAGES_DIR / sample["name"]
             cv2.imwrite(str(save_path), img)
-        
-        logger.info("サンプル画像作成完了")
+            logger.info(f"サンプル画像作成: {sample['name']}")
     
     def get_frame(self) -> Optional[CameraFrame]:
-        """現在のフレームを取得"""
+        """現在のフレームを取得（元のコードの動作を維持）"""
         if not self.is_running:
             return None
         
@@ -167,22 +217,25 @@ class CameraManager:
         
         try:
             if config.USE_CAMERA:
+                # カメラからフレーム取得
                 ret, frame = self.camera.read()
-                if not ret:
+                if not ret or frame is None:
                     logger.error("カメラフレーム取得失敗")
                     return None
                 source = "camera"
             else:
+                # テスト画像からフレーム取得
                 if not self.test_images:
                     return None
                 frame = self.test_images[self.current_test_index].copy()
                 self.current_test_index = (self.current_test_index + 1) % len(self.test_images)
                 source = "test_image"
+                logger.debug(f"テスト画像 {self.current_test_index}/{len(self.test_images)} を使用")
             
-            # タイムスタンプ追加
+            # タイムスタンプ追加（元のコードと同じ）
             timestamp_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            cv2.putText(frame, timestamp_str, (10, 30), 
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+            cv2.putText(frame, timestamp_str, (10, frame.shape[0] - 10), 
+                       cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
             
             # CameraFrameオブジェクト作成
             camera_frame = CameraFrame(

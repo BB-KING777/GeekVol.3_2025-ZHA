@@ -485,6 +485,47 @@ class SystemController:
                 "success": False,
                 "message": f"設定取得エラー: {str(e)}"
             }
+        
+    # main_system.py の SystemController クラスに追加
+
+def get_direct_frame(self):
+    """フレームレート制限を無視して直接フレーム取得"""
+    if not self.is_initialized:
+        return None
+    
+    try:
+        camera_manager = self.system.camera_manager
+        
+        if config.USE_CAMERA:
+            # カメラから直接
+            if camera_manager.camera and camera_manager.camera.isOpened():
+                ret, frame = camera_manager.camera.read()
+                if ret and frame is not None:
+                    from models import CameraFrame
+                    return CameraFrame(
+                        image=frame,
+                        timestamp=datetime.now(),
+                        width=frame.shape[1],
+                        height=frame.shape[0],
+                        source="camera_direct"
+                    )
+        else:
+            # テスト画像から
+            if camera_manager.test_images:
+                frame = camera_manager.test_images[camera_manager.current_test_index].copy()
+                from models import CameraFrame
+                return CameraFrame(
+                    image=frame,
+                    timestamp=datetime.now(),
+                    width=frame.shape[1],
+                    height=frame.shape[0],
+                    source="test_image_direct"
+                )
+        
+        return None
+    except Exception as e:
+        logger.error(f"直接フレーム取得エラー: {e}")
+        return None
 
 # システムのグローバルインスタンス（シングルトン的な使用）
 _system_controller = None
