@@ -7,6 +7,7 @@ import threading
 import numpy as np
 from flask import Flask, request, jsonify, Response
 from datetime import datetime
+from typing import List, Optional, Dict, Any
 
 import config
 from main_system import SystemController

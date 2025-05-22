@@ -1,0 +1,20 @@
+# 高精度顔認識システム用requirements.txt
+
+# 基本パッケージ
+numpy>=1.21.0
+opencv-python>=4.5.0
+pillow>=8.0.0
+requests>=2.25.0
+flask>=2.0.0
+pyttsx3>=2.90
+
+# 高精度顔認識用
+dlib>=19.22.0
+face-recognition>=1.3.0
+
+# データベース・ユーティリティ
+sqlite3  # Python標準ライブラリ
+psutil  # システム情報取得用
+
+# オプション（既存機能）
+# mediapipe>=0.8.0

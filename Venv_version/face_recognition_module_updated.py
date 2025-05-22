@@ -1,5 +1,5 @@
 """
-顔認識モジュール - 複数手法対応、プラグイン式
+顔認識モジュール - 高精度顔認識統合版
 """
 import cv2
 import numpy as np
@@ -32,8 +32,104 @@ class FaceRecognizer(ABC):
         """認識システムが利用可能か"""
         pass
 
+class AdvancedFaceRecognizer(FaceRecognizer):
+    """高精度顔認識（face_recognition ライブラリ使用）"""
+    
+    def __init__(self):
+        try:
+            from face_recognition_advanced import AdvancedFaceRecognizer as AdvancedRecognizer
+            self.recognizer = AdvancedRecognizer()
+            logger.info("高精度顔認識システムを初期化")
+        except ImportError:
+            logger.warning("face_recognition ライブラリがインストールされていません")
+            self.recognizer = None
+        except Exception as e:
+            logger.error(f"高精度顔認識初期化エラー: {e}")
+            self.recognizer = None
+    
+    def is_available(self) -> bool:
+        """利用可能性チェック"""
+        return self.recognizer is not None and self.recognizer.is_available()
+    
+    def detect_faces(self, frame: CameraFrame) -> List[FaceDetection]:
+        """顔検出"""
+        if not self.is_available():
+            return []
+        
+        try:
+            return self.recognizer.recognize_faces(frame)
+        except Exception as e:
+            logger.error(f"高精度顔検出エラー: {e}")
+            return []
+    
+    def recognize_person(self, frame: CameraFrame) -> PersonRecognitionResult:
+        """人物認識"""
+        if not self.is_available():
+            return PersonRecognitionResult(
+                is_known_person=False,
+                method_used="advanced_unavailable"
+            )
+        
+        try:
+            result = self.recognizer.recognize_person(frame)
+            
+            # 既知の人物が見つかった場合、詳細情報を取得
+            if result.is_known_person:
+                person_info = self.recognizer.get_person_info(result.person_id)
+                if person_info:
+                    # 認識メッセージをカスタマイズ
+                    result.custom_message = self._create_welcome_message(person_info)
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"高精度人物認識エラー: {e}")
+            return PersonRecognitionResult(
+                is_known_person=False,
+                method_used="advanced_error"
+            )
+    
+    def _create_welcome_message(self, person_info: Dict) -> str:
+        """個人に合わせた歓迎メッセージを作成"""
+        name = person_info['name']
+        relationship = person_info.get('relationship', '')
+        notes = person_info.get('notes', '')
+        recognition_count = person_info.get('recognition_count', 0)
+        
+        if relationship == '家族':
+            if recognition_count == 1:
+                return f"{name}さん、おかえりなさい！初回認識です。"
+            else:
+                return f"{name}さん、おかえりなさい！"
+        
+        elif relationship == '配達員':
+            return f"{name}さん、いつもありがとうございます。荷物の配達ですね。"
+        
+        elif relationship == '郵便局員':
+            return f"{name}さん、いつもお疲れ様です。郵便物をありがとうございます。"
+        
+        elif relationship == '友人':
+            return f"{name}さん、いらっしゃいませ！お元気でしたか？"
+        
+        else:
+            return f"{name}さん、いらっしゃいませ。"
+    
+    def get_registered_persons(self) -> List[Dict]:
+        """登録済み人物一覧を取得"""
+        if not self.is_available():
+            return []
+        
+        return self.recognizer.get_all_persons()
+    
+    def get_recognition_stats(self) -> Dict:
+        """認識統計を取得"""
+        if not self.is_available():
+            return {}
+        
+        return self.recognizer.get_recognition_stats()
+
 class MediaPipeFaceRecognizer(FaceRecognizer):
-    """MediaPipe による顔認識"""
+    """MediaPipe による顔認識（既存）"""
     
     def __init__(self):
         self.mp_face_detection = None
@@ -48,7 +144,7 @@ class MediaPipeFaceRecognizer(FaceRecognizer):
             self.mp_face_detection = mp.solutions.face_detection
             self.mp_drawing = mp.solutions.drawing_utils
             self.face_detection = self.mp_face_detection.FaceDetection(
-                model_selection=1,  # 0: 2m以内, 1: 5m以内
+                model_selection=1,
                 min_detection_confidence=config.FACE_CONFIDENCE_THRESHOLD
             )
             logger.info("MediaPipe顔認識を初期化")
@@ -100,17 +196,17 @@ class MediaPipeFaceRecognizer(FaceRecognizer):
             return []
     
     def recognize_person(self, frame: CameraFrame) -> PersonRecognitionResult:
-        """人物認識（顔検出のみ、識別は未実装）"""
+        """人物認識（顔検出のみ）"""
         face_detections = self.detect_faces(frame)
         
         return PersonRecognitionResult(
-            is_known_person=False,  # MediaPipeだけでは識別不可
+            is_known_person=False,
             face_detections=face_detections,
             method_used="mediapipe"
         )
 
 class OpenCVHaarFaceRecognizer(FaceRecognizer):
-    """OpenCV Haar Cascade による顔認識"""
+    """OpenCV Haar Cascade による顔認識（既存）"""
     
     def __init__(self):
         self.face_cascade = None
@@ -156,7 +252,7 @@ class OpenCVHaarFaceRecognizer(FaceRecognizer):
             for (x, y, w, h) in faces:
                 face_det = FaceDetection(
                     bbox=(x, y, x + w, y + h),
-                    confidence=0.8  # Haar Cascadeは信頼度を返さないので固定値
+                    confidence=0.8
                 )
                 detections.append(face_det)
             
@@ -192,7 +288,7 @@ class NoFaceRecognizer(FaceRecognizer):
         )
 
 class FaceRecognitionManager:
-    """顔認識システム管理"""
+    """顔認識システム管理（統合版）"""
     
     def __init__(self):
         self.recognizers = {}
@@ -203,8 +299,9 @@ class FaceRecognitionManager:
     
     def _initialize_recognizers(self):
         """認識システム初期化"""
-        # 利用可能な認識システムを順次試す
+        # 高精度顔認識を最優先に設定
         recognizer_classes = [
+            ("advanced", AdvancedFaceRecognizer),      # 最優先
             ("mediapipe", MediaPipeFaceRecognizer),
             ("opencv_haar", OpenCVHaarFaceRecognizer),
             ("none", NoFaceRecognizer)
@@ -217,7 +314,13 @@ class FaceRecognitionManager:
                     self.recognizers[name] = recognizer
                     logger.info(f"顔認識システム '{name}' を初期化")
                     
-                    # 最初に利用可能なものをアクティブに
+                    # 高精度顔認識が利用可能な場合は優先的に使用
+                    if name == "advanced" and recognizer.is_available():
+                        self.active_recognizer = recognizer
+                        logger.info(f"高精度顔認識をアクティブに設定")
+                        break
+                    
+                    # 最初に利用可能なものをアクティブに（高精度が使えない場合）
                     if self.active_recognizer is None:
                         self.active_recognizer = recognizer
                         logger.info(f"アクティブ顔認識: {name}")
@@ -231,7 +334,7 @@ class FaceRecognitionManager:
             logger.warning("全ての顔認識システムが利用不可、フォールバックを使用")
     
     def _load_known_faces(self):
-        """既知の顔データベース読み込み"""
+        """既知の顔データベース読み込み（下位互換性）"""
         try:
             db_path = config.DATA_DIR / "known_faces.json"
             if db_path.exists():
@@ -245,39 +348,21 @@ class FaceRecognitionManager:
             logger.error(f"既知の顔データベース読み込みエラー: {e}")
             self.known_faces_db = {}
     
-    def save_known_faces(self):
-        """既知の顔データベース保存"""
-        try:
-            db_path = config.DATA_DIR / "known_faces.json"
-            with open(db_path, 'w', encoding='utf-8') as f:
-                json.dump(self.known_faces_db, f, ensure_ascii=False, indent=2)
-            logger.info("既知の顔データベース保存完了")
-        except Exception as e:
-            logger.error(f"既知の顔データベース保存エラー: {e}")
-    
-    def add_known_person(self, person_id: str, name: str, face_features: Any = None):
-        """既知の人物を追加"""
-        self.known_faces_db[person_id] = {
-            "name": name,
-            "added_date": datetime.now().isoformat(),
-            "features": face_features  # 将来的な特徴量保存用
-        }
-        self.save_known_faces()
-        logger.info(f"既知の人物を追加: {person_id} - {name}")
-    
     def recognize_person(self, frame: CameraFrame) -> PersonRecognitionResult:
         """人物認識実行"""
         if not config.USE_FACE_RECOGNITION or not self.active_recognizer:
             return PersonRecognitionResult(is_known_person=False, method_used="disabled")
         
         try:
-            # 基本的な顔検出を実行
+            # アクティブな認識システムで実行
             result = self.active_recognizer.recognize_person(frame)
             
-            # 既知の人物との照合（簡易版 - 将来的に特徴量マッチングに拡張可能）
-            if result.face_detections and self.known_faces_db:
-                # 現時点では顔が検出されても既知人物判定は行わない
-                # 将来的にここで特徴量比較を実装
+            # 高精度顔認識で既知の人物が見つかった場合、カスタムメッセージを設定
+            if (result.is_known_person and 
+                hasattr(self.active_recognizer, '_create_welcome_message') and
+                hasattr(result, 'custom_message')):
+                
+                # カスタムメッセージが設定されている場合はそれを使用
                 pass
             
             return result
@@ -298,25 +383,58 @@ class FaceRecognitionManager:
             return True
         return False
     
+    def get_current_method(self) -> str:
+        """現在の認識手法を取得"""
+        for name, recognizer in self.recognizers.items():
+            if recognizer == self.active_recognizer:
+                return name
+        return "unknown"
+    
+    def is_advanced_available(self) -> bool:
+        """高精度顔認識が利用可能か"""
+        return "advanced" in self.recognizers
+    
+    def get_registered_persons(self) -> List[Dict]:
+        """登録済み人物一覧を取得"""
+        if self.is_advanced_available():
+            return self.recognizers["advanced"].get_registered_persons()
+        return []
+    
+    def get_recognition_stats(self) -> Dict:
+        """認識統計を取得"""
+        if self.is_advanced_available():
+            return self.recognizers["advanced"].get_recognition_stats()
+        return {}
+    
     def draw_detections(self, frame: CameraFrame, detections: List[FaceDetection]) -> np.ndarray:
         """検出結果を画像に描画"""
         result_image = frame.image.copy()
         
+        # 高精度顔認識が利用可能な場合は専用の描画メソッドを使用
+        if (self.is_advanced_available() and 
+            hasattr(self.recognizers["advanced"], 'recognizer') and
+            self.recognizers["advanced"].recognizer):
+            try:
+                return self.recognizers["advanced"].recognizer.draw_detections(frame, detections)
+            except:
+                pass
+        
+        # フォールバック描画
         for detection in detections:
             x1, y1, x2, y2 = detection.bbox
             
             # バウンディングボックス
-            cv2.rectangle(result_image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            color = (0, 255, 0) if detection.person_id else (0, 0, 255)
+            cv2.rectangle(result_image, (x1, y1), (x2, y2), color, 2)
             
             # 信頼度表示
             confidence_text = f"{detection.confidence:.2f}"
             cv2.putText(result_image, confidence_text, (x1, y1 - 10),
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+                       cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
             
-            # 人物ID（既知の場合）
+            # 人物名（既知の場合）
             if detection.person_id:
-                person_name = self.known_faces_db.get(detection.person_id, {}).get("name", detection.person_id)
-                cv2.putText(result_image, person_name, (x1, y2 + 20),
+                cv2.putText(result_image, detection.person_id, (x1, y2 + 20),
                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
         
         return result_image
