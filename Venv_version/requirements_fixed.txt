@@ -1,0 +1,15 @@
+# 互換性修正版 requirements.txt
+# NumPy 1.x (OpenCV互換)
+numpy<2
+
+# 基本パッケージ
+requests
+flask
+pillow
+pyttsx3
+
+# OpenCV (NumPy 1.x互換)
+opencv-python
+
+# オプション（手動インストール推奨）
+# mediapipe

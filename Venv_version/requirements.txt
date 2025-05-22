@@ -1,0 +1,16 @@
+# 基本的な依存関係のみ（最小限）
+opencv-python
+requests
+flask
+numpy
+pillow
+
+# 音声出力（OS標準コマンドを優先、フォールバック用）
+pyttsx3
+
+# 人物認識（オプション - 必要に応じて有効化）
+# mediapipe
+# face-recognition
+
+# 開発・テスト用
+# pytest

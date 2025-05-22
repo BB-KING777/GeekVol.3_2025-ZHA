@@ -1,0 +1,322 @@
+2025-05-22 23:19:10,065 - face_recognition_module - WARNING - MediaPipeがインストールされていません
+2025-05-22 23:19:10,096 - face_recognition_module - INFO - OpenCV Haar Cascade顔認識を初期化
+2025-05-22 23:19:10,096 - face_recognition_module - INFO - 顔認識システム 'opencv_haar' を初期化
+2025-05-22 23:19:10,097 - face_recognition_module - INFO - アクティブ顔認識: opencv_haar
+2025-05-22 23:19:10,097 - face_recognition_module - INFO - 顔認識システム 'none' を初期化
+2025-05-22 23:19:10,097 - face_recognition_module - INFO - 既知の顔データベースなし
+2025-05-22 23:19:12,163 - comtypes.client._code_cache - INFO - Could not import comtypes.gen, trying to create it.
+2025-05-22 23:19:12,164 - comtypes.client._code_cache - INFO - Created comtypes.gen directory: 'C:\Users\Shuta Wakamiya\Downloads\GeekVol.3_2025\Venv_version\venv\Lib\site-packages\comtypes\gen'
+2025-05-22 23:19:12,164 - comtypes.client._code_cache - INFO - Writing __init__.py file: 'C:\Users\Shuta Wakamiya\Downloads\GeekVol.3_2025\Venv_version\venv\Lib\site-packages\comtypes\gen\__init__.py'
+2025-05-22 23:19:12,167 - comtypes.client._code_cache - INFO - Using writeable comtypes cache directory: 'C:\Users\Shuta Wakamiya\Downloads\GeekVol.3_2025\Venv_version\venv\Lib\site-packages\comtypes\gen'
+2025-05-22 23:19:12,185 - comtypes.client._generate - INFO - Could not import comtypes.gen._C866CA3A_32F7_11D2_9602_00C04F8EE628_0_5_4: No module named 'comtypes.gen._C866CA3A_32F7_11D2_9602_00C04F8EE628_0_5_4'
+2025-05-22 23:19:12,190 - comtypes.client._generate - INFO - # Generating comtypes.gen._C866CA3A_32F7_11D2_9602_00C04F8EE628_0_5_4
+2025-05-22 23:19:12,314 - comtypes.client._generate - INFO - # Generating comtypes.gen.SpeechLib
+2025-05-22 23:19:12,324 - comtypes.client._generate - INFO - Could not import comtypes.gen._00020430_0000_0000_C000_000000000046_0_2_0: No module named 'comtypes.gen._00020430_0000_0000_C000_000000000046_0_2_0'
+2025-05-22 23:19:12,325 - comtypes.client._generate - INFO - # Generating comtypes.gen._00020430_0000_0000_C000_000000000046_0_2_0
+2025-05-22 23:19:12,333 - comtypes.client._generate - INFO - # Generating comtypes.gen.stdole
+2025-05-22 23:19:12,648 - audio_module - INFO - pyttsx3 音声エンジンが利用可能
+2025-05-22 23:19:12,648 - audio_module - INFO - 利用可能な音声方法: ['system', 'pyttsx3']
+2025-05-22 23:19:12,648 - audio_module - INFO - 音声管理システムを初期化
+2025-05-22 23:19:12,648 - api_client - INFO - Ollama APIクライアント初期化: http://localhost:11434/api/chat
+2025-05-22 23:19:12,649 - main_system - INFO - 訪問者認識システムを初期化
+2025-05-22 23:19:12,654 - main_system - INFO - システム開始処理を実行中...
+2025-05-22 23:19:14,720 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:19:20,300 - camera_module - INFO - カメラ初期化成功
+2025-05-22 23:19:20,301 - main_system - INFO - フレームキャプチャスレッド終了
+2025-05-22 23:19:20,301 - main_system - INFO - フレームキャプチャスレッド開始
+2025-05-22 23:19:20,301 - main_system - INFO - システムが正常に起動しました。カメラモードで動作中です。 顔認識: opencv_haar
+2025-05-22 23:19:20,302 - main_system - INFO - システムコントローラー初期化完了
+2025-05-22 23:19:20,394 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.0.9:8080
+2025-05-22 23:19:20,394 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-22 23:19:42,106 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:19:42,114 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:19:42,115 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:19:42] "GET / HTTP/1.1" 200 -
+2025-05-22 23:19:42,160 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:19:42] "GET /video_feed HTTP/1.1" 200 -
+2025-05-22 23:19:42,182 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:19:42,191 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:19:42,192 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:19:42] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:19:42,514 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:19:42] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-05-22 23:19:43,148 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:19:43,152 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:19:43,153 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:19:43] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:19:44,147 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:19:44,151 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:19:44,151 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:19:44] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:19:45,151 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:19:45,154 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:19:45,155 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:19:45] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:19:46,147 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:19:46,152 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:19:46,152 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:19:46] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:19:47,160 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:19:47,164 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:19:47,164 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:19:47] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:19:48,157 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:19:48,161 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:19:48,161 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:19:48] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:19:49,155 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:19:49,158 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:19:49,159 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:19:49] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:19:51,105 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:19:51,110 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:19:51,111 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:19:51] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:19:53,107 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:19:53,112 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:19:53,113 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:19:53] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:19:55,115 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:19:55,119 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:19:55,120 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:19:55] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:19:56,540 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:19:56,545 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:19:56,546 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:19:56] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:19:57,151 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:19:57,154 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:19:57,155 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:19:57] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:19:58,147 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:19:58,151 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:19:58,152 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:19:58] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:19:59,149 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:19:59,154 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:19:59,154 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:19:59] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:20:00,159 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:20:00,165 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:20:00,166 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:20:00] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:20:06,249 - main_system - INFO - システム停止処理を開始
+2025-05-22 23:20:54,062 - face_recognition_module - WARNING - MediaPipeがインストールされていません
+2025-05-22 23:20:54,094 - face_recognition_module - INFO - OpenCV Haar Cascade顔認識を初期化
+2025-05-22 23:20:54,094 - face_recognition_module - INFO - 顔認識システム 'opencv_haar' を初期化
+2025-05-22 23:20:54,094 - face_recognition_module - INFO - アクティブ顔認識: opencv_haar
+2025-05-22 23:20:54,094 - face_recognition_module - INFO - 顔認識システム 'none' を初期化
+2025-05-22 23:20:54,095 - face_recognition_module - INFO - 既知の顔データベースなし
+2025-05-22 23:20:56,021 - comtypes.client._code_cache - INFO - Imported existing <module 'comtypes.gen' from 'C:\\Users\\Shuta Wakamiya\\Downloads\\GeekVol.3_2025\\Venv_version\\venv\\Lib\\site-packages\\comtypes\\gen\\__init__.py'>
+2025-05-22 23:20:56,022 - comtypes.client._code_cache - INFO - Using writeable comtypes cache directory: 'C:\Users\Shuta Wakamiya\Downloads\GeekVol.3_2025\Venv_version\venv\Lib\site-packages\comtypes\gen'
+2025-05-22 23:20:56,169 - audio_module - INFO - pyttsx3 音声エンジンが利用可能
+2025-05-22 23:20:56,169 - audio_module - INFO - 利用可能な音声方法: ['system', 'pyttsx3']
+2025-05-22 23:20:56,169 - audio_module - INFO - 音声管理システムを初期化
+2025-05-22 23:20:56,170 - api_client - INFO - Ollama APIクライアント初期化: http://localhost:11434/api/chat
+2025-05-22 23:20:56,170 - main_system - INFO - 訪問者認識システムを初期化
+2025-05-22 23:20:56,175 - main_system - INFO - システム開始処理を実行中...
+2025-05-22 23:20:58,255 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:03,701 - camera_module - INFO - カメラ初期化成功
+2025-05-22 23:21:03,703 - main_system - INFO - フレームキャプチャスレッド終了
+2025-05-22 23:21:03,703 - main_system - INFO - フレームキャプチャスレッド開始
+2025-05-22 23:21:03,704 - main_system - INFO - システムが正常に起動しました。カメラモードで動作中です。 顔認識: opencv_haar
+2025-05-22 23:21:03,704 - main_system - INFO - システムコントローラー初期化完了
+2025-05-22 23:21:03,797 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.0.9:8080
+2025-05-22 23:21:03,797 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-22 23:21:10,098 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:10,105 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:10,107 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:10] "GET / HTTP/1.1" 200 -
+2025-05-22 23:21:10,158 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:10] "GET /video_feed HTTP/1.1" 200 -
+2025-05-22 23:21:10,163 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:10,171 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:10,172 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:10] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:11,156 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:11,160 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:11,160 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:11] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:12,143 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:12,148 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:12,148 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:12] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:13,150 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:13,155 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:13,155 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:13] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:14,146 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:14,151 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:14,151 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:14] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:14,497 - main_system - INFO - 訪問者分析を開始
+2025-05-22 23:21:14,497 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:14] "POST /api/doorbell HTTP/1.1" 200 -
+2025-05-22 23:21:14,498 - main_system - ERROR - 分析用の画像を取得できませんでした
+2025-05-22 23:21:15,149 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:15,154 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:15,154 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:15] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:16,144 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:16,148 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:16,149 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:16] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:17,146 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:17,151 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:17,151 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:17] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:18,144 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:18,148 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:18,148 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:18] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:19,156 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:19,160 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:19,160 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:19] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:20,156 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:20,161 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:20,161 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:20] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:21,152 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:21,155 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:21,156 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:21] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:22,149 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:22,152 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:22,153 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:22] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:23,153 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:23,157 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:23,158 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:23] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:24,150 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:24,154 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:24,154 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:24] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:25,142 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:25,148 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:25,149 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:25] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:26,147 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:26,152 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:26,152 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:26] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:27,156 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:27,160 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:27,160 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:27] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:28,155 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:28,158 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:28,158 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:28] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:29,156 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:29,160 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:29,160 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:29] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:30,143 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:30,147 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:30,148 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:30] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:31,149 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:31,153 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:31,154 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:31] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:32,152 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:32,156 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:32,156 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:32] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:33,147 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:33,153 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:33,154 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:33] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:34,143 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:34,147 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:34,148 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:34] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:35,158 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:35,162 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:35,163 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:35] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:36,152 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:36,156 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:36,156 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:36] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:37,144 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:37,153 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:37,153 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:37] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:38,155 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:38,159 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:38,159 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:38] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:39,140 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:39,144 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:39,144 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:39] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:41,105 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:41,109 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:41,109 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:41] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:43,114 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:43,118 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:43,119 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:43] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:45,110 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:21:45,113 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:21:45,114 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:21:45] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:21:46,630 - main_system - INFO - システム停止処理を開始
+2025-05-22 23:21:49,786 - camera_module - INFO - カメラ停止
+2025-05-22 23:21:49,787 - audio_module - INFO - 音声キューをクリア
+2025-05-22 23:21:49,787 - audio_module - INFO - 音声管理システム停止
+2025-05-22 23:21:49,787 - main_system - INFO - システム停止完了
+2025-05-22 23:23:22,154 - face_recognition_module - WARNING - MediaPipeがインストールされていません
+2025-05-22 23:23:22,190 - face_recognition_module - INFO - OpenCV Haar Cascade顔認識を初期化
+2025-05-22 23:23:22,190 - face_recognition_module - INFO - 顔認識システム 'opencv_haar' を初期化
+2025-05-22 23:23:22,190 - face_recognition_module - INFO - アクティブ顔認識: opencv_haar
+2025-05-22 23:23:22,191 - face_recognition_module - INFO - 顔認識システム 'none' を初期化
+2025-05-22 23:23:22,191 - face_recognition_module - INFO - 既知の顔データベースなし
+2025-05-22 23:23:24,119 - comtypes.client._code_cache - INFO - Imported existing <module 'comtypes.gen' from 'C:\\Users\\Shuta Wakamiya\\Downloads\\GeekVol.3_2025\\Venv_version\\venv\\Lib\\site-packages\\comtypes\\gen\\__init__.py'>
+2025-05-22 23:23:24,120 - comtypes.client._code_cache - INFO - Using writeable comtypes cache directory: 'C:\Users\Shuta Wakamiya\Downloads\GeekVol.3_2025\Venv_version\venv\Lib\site-packages\comtypes\gen'
+2025-05-22 23:23:24,270 - audio_module - INFO - pyttsx3 音声エンジンが利用可能
+2025-05-22 23:23:24,270 - audio_module - INFO - 利用可能な音声方法: ['system', 'pyttsx3']
+2025-05-22 23:23:24,270 - audio_module - INFO - 音声管理システムを初期化
+2025-05-22 23:23:24,271 - api_client - INFO - Ollama APIクライアント初期化: http://localhost:11434/api/chat
+2025-05-22 23:23:24,271 - main_system - INFO - 訪問者認識システムを初期化
+2025-05-22 23:23:24,277 - main_system - INFO - システム開始処理を実行中...
+2025-05-22 23:23:26,365 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:23:26,447 - camera_module - ERROR - カメラ 1 を開けませんでした
+2025-05-22 23:23:26,448 - main_system - ERROR - カメラの初期化に失敗しました。
+2025-05-22 23:25:21,536 - face_recognition_module - WARNING - MediaPipeがインストールされていません
+2025-05-22 23:25:21,568 - face_recognition_module - INFO - OpenCV Haar Cascade顔認識を初期化
+2025-05-22 23:25:21,568 - face_recognition_module - INFO - 顔認識システム 'opencv_haar' を初期化
+2025-05-22 23:25:21,569 - face_recognition_module - INFO - アクティブ顔認識: opencv_haar
+2025-05-22 23:25:21,569 - face_recognition_module - INFO - 顔認識システム 'none' を初期化
+2025-05-22 23:25:21,569 - face_recognition_module - INFO - 既知の顔データベースなし
+2025-05-22 23:25:23,492 - comtypes.client._code_cache - INFO - Imported existing <module 'comtypes.gen' from 'C:\\Users\\Shuta Wakamiya\\Downloads\\GeekVol.3_2025\\Venv_version\\venv\\Lib\\site-packages\\comtypes\\gen\\__init__.py'>
+2025-05-22 23:25:23,493 - comtypes.client._code_cache - INFO - Using writeable comtypes cache directory: 'C:\Users\Shuta Wakamiya\Downloads\GeekVol.3_2025\Venv_version\venv\Lib\site-packages\comtypes\gen'
+2025-05-22 23:25:23,688 - audio_module - INFO - pyttsx3 音声エンジンが利用可能
+2025-05-22 23:25:23,688 - audio_module - INFO - 利用可能な音声方法: ['system', 'pyttsx3']
+2025-05-22 23:25:23,688 - audio_module - INFO - 音声管理システムを初期化
+2025-05-22 23:25:23,689 - api_client - INFO - Ollama APIクライアント初期化: http://localhost:11434/api/chat
+2025-05-22 23:25:23,689 - main_system - INFO - 訪問者認識システムを初期化
+2025-05-22 23:25:23,694 - main_system - INFO - システム開始処理を実行中...
+2025-05-22 23:25:25,763 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:25:31,287 - camera_module - INFO - カメラ初期化成功
+2025-05-22 23:25:31,288 - main_system - INFO - フレームキャプチャスレッド終了
+2025-05-22 23:25:31,288 - main_system - INFO - フレームキャプチャスレッド開始
+2025-05-22 23:25:31,289 - main_system - INFO - システムが正常に起動しました。カメラモードで動作中です。 顔認識: opencv_haar
+2025-05-22 23:25:31,289 - main_system - INFO - システムコントローラー初期化完了
+2025-05-22 23:25:31,379 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.0.9:8080
+2025-05-22 23:25:31,379 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-22 23:25:31,409 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:25:31,415 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:25:31,416 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:25:31] "GET / HTTP/1.1" 200 -
+2025-05-22 23:25:31,479 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:25:31] "GET /video_feed HTTP/1.1" 200 -
+2025-05-22 23:25:31,483 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:25:31,490 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:25:31,491 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:25:31] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:25:32,459 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:25:32,463 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:25:32,464 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:25:32] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:25:33,458 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:25:33,462 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:25:33,462 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:25:33] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:25:34,448 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:25:34,452 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:25:34,452 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:25:34] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:25:35,445 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:25:35,449 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:25:35,450 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:25:35] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:25:36,452 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:25:36,456 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:25:36,456 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:25:36] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:25:37,462 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:25:37,466 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:25:37,466 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:25:37] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:25:38,461 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:25:38,464 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:25:38,465 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:25:38] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:25:39,460 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:25:39,464 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:25:39,465 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:25:39] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:25:40,450 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:25:40,454 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:25:40,455 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:25:40] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:25:41,462 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:25:41,466 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:25:41,466 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:25:41] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:25:42,458 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:25:42,461 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:25:42,461 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:25:42] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:25:44,104 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:25:44,108 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:25:44,109 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:25:44] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:25:45,100 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:25:45,104 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:25:45,104 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:25:45] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:25:46,112 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:25:46,116 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:25:46,116 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:25:46] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:25:47,109 - api_client - INFO - Ollama API接続テスト成功
+2025-05-22 23:25:47,112 - api_client - INFO - 利用可能なモデル: ['gemma3:4b']
+2025-05-22 23:25:47,113 - werkzeug - INFO - 127.0.0.1 - - [22/May/2025 23:25:47] "GET /api/status HTTP/1.1" 200 -
+2025-05-22 23:25:47,615 - main_system - INFO - システム停止処理を開始
+2025-05-22 23:25:50,769 - camera_module - INFO - カメラ停止
+2025-05-22 23:25:50,769 - audio_module - INFO - 音声キューをクリア
+2025-05-22 23:25:50,769 - audio_module - INFO - 音声管理システム停止
+2025-05-22 23:25:50,769 - main_system - INFO - システム停止完了
