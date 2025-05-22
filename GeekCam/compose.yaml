@@ -1,0 +1,61 @@
+services:
+  geek_cam_yolo:
+    # YOLO統合玄関訪問者認識システム
+    image: zha_container:use
+    container_name: geek_cam_yolo_system
+    command: bash -c 'export PATH="$PATH:/usr/local/cuda/bin" && export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/lib64" && /app/start_system.sh'
+    volumes:
+      # システムファイル
+      - /home/nyancat/workspace/llm/ZHA/GeekCam:/app/geek_cam
+      # Argusソケット（カメラアクセス用）
+      - /tmp/argus_socket:/tmp/argus_socket
+      # モデル保存用
+      - ./models:/app/geek_cam/model
+      - ./runs:/app/geek_cam/runs
+      # データセット用
+      - ./dataset:/app/geek_cam/dataset
+      - ./faces:/app/geek_cam/faces
+      # キャプチャ画像保存用
+      - ./captures:/app/geek_cam/captures
+    devices:
+      # カメラデバイス
+      - "/dev/video0:/dev/video0"
+    ports:
+      # Ollama API
+      - "11434:11434"
+      # Web UI
+      - "8080:8080"
+    runtime: nvidia
+    stdin_open: true
+    tty: true
+    environment:
+      # NVIDIA GPU設定
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility,video
+      # CUDA設定
+      - CUDA_VISIBLE_DEVICES=0
+      # Ollama GPU設定
+      - OLLAMA_GPU_LAYERS=-1
+      - OLLAMA_GPU_MEMORY=8192
+      # システム設定
+      - PYTHONPATH=/app/geek_cam
+      - TZ=Asia/Tokyo
+    network_mode: "host"
+    restart: unless-stopped
+    
+    # ヘルスチェック
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+# 永続化用ボリューム
+volumes:
+  ollama_models:
+    driver: local
+  yolo_models:
+    driver: local
+  captured_data:
+    driver: local
