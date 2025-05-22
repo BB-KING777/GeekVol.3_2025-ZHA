@@ -37,11 +37,11 @@ REQUEST_TIMEOUT = 300
 # === 高精度顔認識設定 ===
 USE_FACE_RECOGNITION = True
 FACE_RECOGNITION_METHOD = "advanced"  # "advanced", "mediapipe", "opencv_haar", "none"
-FACE_CONFIDENCE_THRESHOLD = 0.6  # 高精度顔認識の信頼度閾値（低いほど厳密）
+FACE_CONFIDENCE_THRESHOLD = 0.7  # 高精度顔認識の信頼度閾値（低いほど厳密）
 
 # 高精度顔認識の詳細設定
 ADVANCED_FACE_RECOGNITION = {
-    "recognition_threshold": 0.6,  # 既知の人物として認識する最低信頼度
+    "recognition_threshold": 0.7,  # 既知の人物として認識する最低信頼度
     "max_distance": 0.6,           # 顔の距離の最大値
     "min_face_size": 30,           # 検出する顔の最小サイズ（ピクセル）
     "max_faces_per_image": 10,     # 1つの画像で処理する最大顔数
