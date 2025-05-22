@@ -1,5 +1,5 @@
 """
-メインシステム - 完全修正版（フレームバッファ問題解決）
+メインシステム - 全モジュール統合
 """
 import time
 import threading
@@ -26,7 +26,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class VisitorRecognitionSystem:
-    """訪問者認識システムメインクラス（完全修正版）"""
+    """訪問者認識システムメインクラス"""
     
     def __init__(self):
         # システム状態
@@ -75,9 +75,6 @@ class VisitorRecognitionSystem:
             self.status.is_running = True
             self.status.camera_active = True
             
-            # フレームキャプチャが正常に動作するまで少し待機
-            time.sleep(2)
-            
             # 開始メッセージ
             camera_mode = "カメラ" if config.USE_CAMERA else "テスト画像"
             face_methods = self.face_recognition.get_available_methods()
@@ -105,54 +102,27 @@ class VisitorRecognitionSystem:
         logger.info("フレームキャプチャスレッド開始")
     
     def _frame_capture_loop(self):
-        """フレームキャプチャメインループ（修正版）"""
-        logger.info("フレームキャプチャループ開始")
-        frame_count = 0
-        error_count = 0
-        last_success_time = time.time()
-        
+        """フレームキャプチャメインループ"""
         while not self.stop_capture and self.status.is_running:
             try:
-                current_time = time.time()
-                
-                # フレーム取得（フレームレート制限を無視）
-                original_last_time = self.camera_manager.last_frame_time
-                self.camera_manager.last_frame_time = 0  # フレームレート制限を一時無効化
-                
+                # フレーム取得
                 frame = self.camera_manager.get_frame()
-                
-                self.camera_manager.last_frame_time = original_last_time  # 制限を復元
-                
-                if frame and frame.image is not None:
-                    # フレームバッファに追加
+                if frame:
+                    # バッファに追加
                     self.frame_buffer.add_frame(frame)
                     self.status.frame_count += 1
-                    frame_count += 1
-                    last_success_time = current_time
-                    error_count = 0  # エラーカウントリセット
-                    
-                    # 定期的な進捗表示
-                    if frame_count % 30 == 0:
-                        logger.info(f"フレームキャプチャ進行中: {frame_count}フレーム, バッファサイズ: {len(self.frame_buffer.frames)}")
                 
-                else:
-                    error_count += 1
-                    if error_count % 10 == 0:
-                        logger.warning(f"フレーム取得失敗継続中: {error_count}回")
-                
-                # 短時間待機（フレームレート調整）
-                time.sleep(0.1)  # 10FPS程度
+                # 短時間待機
+                time.sleep(0.1)
                 
             except Exception as e:
-                error_count += 1
-                if error_count % 20 == 0:
-                    logger.error(f"フレームキャプチャエラー (第{error_count}回): {e}")
+                logger.error(f"フレームキャプチャエラー: {e}")
                 time.sleep(0.5)
         
-        logger.info(f"フレームキャプチャループ終了 (総フレーム数: {frame_count})")
+        logger.info("フレームキャプチャスレッド終了")
     
     def analyze_visitor(self, time_offset: float = 0.0) -> AnalysisResult:
-        """訪問者分析実行（修正版）"""
+        """訪問者分析実行"""
         start_time = time.time()
         
         with self.analysis_lock:
@@ -167,94 +137,17 @@ class VisitorRecognitionSystem:
             logger.info("訪問者分析を開始")
             self.audio_manager.speak("訪問者を確認しています。しばらくお待ちください。", priority=1)
             
-            # 分析用フレーム取得（複数の方法を試行）
-            frame = None
-            
-            # 方法1: フレームバッファから取得
+            # 分析用フレーム取得
             if time_offset == 0.0:
                 frame = self.frame_buffer.get_latest_frame()
-                if frame:
-                    logger.info("方法1: フレームバッファから取得成功")
-                else:
-                    logger.warning("方法1: フレームバッファから取得失敗")
             else:
                 frame = self.frame_buffer.get_frame_by_offset(time_offset)
-                if frame:
-                    logger.info(f"方法1: オフセット{time_offset}秒でフレーム取得成功")
-                else:
-                    logger.warning(f"方法1: オフセット{time_offset}秒でフレーム取得失敗")
-            
-            # 方法2: カメラマネージャーから直接取得
-            if not frame:
-                logger.info("方法2: カメラマネージャーから直接取得を試行")
-                # フレームレート制限を一時的に無効化
-                original_last_time = self.camera_manager.last_frame_time
-                self.camera_manager.last_frame_time = 0
-                
-                frame = self.camera_manager.get_frame()
-                
-                # フレームレート制限を復元
-                self.camera_manager.last_frame_time = original_last_time
-                
-                if frame:
-                    logger.info("方法2: カメラマネージャーから取得成功")
-                else:
-                    logger.warning("方法2: カメラマネージャーから取得失敗")
-            
-            # 方法3: 直接カメラAPIから取得
-            if not frame:
-                logger.info("方法3: 直接カメラAPIから取得を試行")
-                try:
-                    import cv2
-                    from models import CameraFrame
-                    
-                    if config.USE_CAMERA and self.camera_manager.camera:
-                        ret, direct_frame = self.camera_manager.camera.read()
-                        if ret and direct_frame is not None:
-                            # タイムスタンプ追加
-                            timestamp_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                            cv2.putText(direct_frame, timestamp_str, (10, direct_frame.shape[0] - 10), 
-                                       cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
-                            
-                            frame = CameraFrame(
-                                image=direct_frame,
-                                timestamp=datetime.now(),
-                                width=direct_frame.shape[1],
-                                height=direct_frame.shape[0],
-                                source="camera_direct"
-                            )
-                            logger.info("方法3: 直接カメラAPIから取得成功")
-                        else:
-                            logger.warning("方法3: 直接カメラAPIから取得失敗")
-                    elif not config.USE_CAMERA and self.camera_manager.test_images:
-                        test_frame = self.camera_manager.test_images[self.camera_manager.current_test_index].copy()
-                        self.camera_manager.current_test_index = (self.camera_manager.current_test_index + 1) % len(self.camera_manager.test_images)
-                        
-                        # タイムスタンプ追加
-                        timestamp_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                        cv2.putText(test_frame, timestamp_str, (10, test_frame.shape[0] - 10), 
-                                   cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
-                        
-                        frame = CameraFrame(
-                            image=test_frame,
-                            timestamp=datetime.now(),
-                            width=test_frame.shape[1],
-                            height=test_frame.shape[0],
-                            source="test_image_direct"
-                        )
-                        logger.info("方法3: テスト画像から取得成功")
-                except Exception as e:
-                    logger.error(f"方法3でエラー: {e}")
             
             if not frame:
-                error_msg = "すべての方法で分析用の画像を取得できませんでした"
+                error_msg = "分析用の画像を取得できませんでした"
                 logger.error(error_msg)
-                logger.error(f"バッファ内フレーム数: {len(self.frame_buffer.frames)}")
-                logger.error(f"カメラ状態: 稼働={self.camera_manager.is_running}, カメラ={self.camera_manager.camera is not None}")
                 self.audio_manager.speak(error_msg)
                 return None
-            
-            logger.info(f"分析用フレーム取得成功: {frame.width}x{frame.height} ({frame.source})")
             
             # Step 1: 顔認識
             person_recognition = self.face_recognition.recognize_person(frame)
@@ -344,13 +237,7 @@ class VisitorRecognitionSystem:
             logger.error(f"画像保存エラー: {e}")
     
     def get_current_frame(self):
-        """現在のフレーム取得（修正版）"""
-        # まずバッファから試行
-        frame = self.frame_buffer.get_latest_frame()
-        if frame:
-            return frame
-        
-        # バッファにない場合は直接取得
+        """現在のフレーム取得"""
         return self.camera_manager.get_current_frame()
     
     def get_system_status(self) -> dict:
@@ -363,7 +250,6 @@ class VisitorRecognitionSystem:
                 "is_processing": self.status.is_processing,
                 "camera_active": self.status.camera_active,
                 "frame_count": self.status.frame_count,
-                "buffer_size": len(self.frame_buffer.frames),  # バッファサイズも追加
                 "last_analysis": self.status.last_analysis.isoformat() if self.status.last_analysis else None,
                 "last_error": self.status.last_error
             },
@@ -406,7 +292,7 @@ class VisitorRecognitionSystem:
             logger.error(f"システム停止エラー: {e}")
 
 class SystemController:
-    """システム制御クラス - 外部からの操作用（修正版）"""
+    """システム制御クラス - 外部からの操作用"""
     
     def __init__(self):
         self.system = VisitorRecognitionSystem()
@@ -548,6 +434,98 @@ class SystemController:
                 "success": False,
                 "message": f"再起動エラー: {str(e)}"
             }
+    
+    def update_config(self, key: str, value) -> dict:
+        """設定更新"""
+        try:
+            if hasattr(config, key):
+                setattr(config, key, value)
+                logger.info(f"設定更新: {key} = {value}")
+                
+                # 特定の設定変更時の処理
+                if key == "USE_CAMERA" and self.is_initialized:
+                    # カメラ設定変更時は再起動が必要
+                    return self.restart()
+                
+                return {
+                    "success": True,
+                    "message": f"設定を更新しました: {key} = {value}"
+                }
+            else:
+                return {
+                    "success": False,
+                    "message": f"不明な設定項目: {key}"
+                }
+                
+        except Exception as e:
+            logger.error(f"設定更新エラー: {e}")
+            return {
+                "success": False,
+                "message": f"設定更新エラー: {str(e)}"
+            }
+    
+    def get_config(self) -> dict:
+        """現在の設定取得"""
+        try:
+            return {
+                "success": True,
+                "config": {
+                    "USE_CAMERA": config.USE_CAMERA,
+                    "CAMERA_ID": config.CAMERA_ID,
+                    "FRAME_RATE": config.FRAME_RATE,
+                    "USE_FACE_RECOGNITION": config.USE_FACE_RECOGNITION,
+                    "FACE_RECOGNITION_METHOD": config.FACE_RECOGNITION_METHOD,
+                    "MODEL_NAME": config.MODEL_NAME,
+                    "DEBUG_MODE": config.DEBUG_MODE,
+                    "AUTO_SAVE_CAPTURES": config.AUTO_SAVE_CAPTURES
+                }
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "message": f"設定取得エラー: {str(e)}"
+            }
+        
+    # main_system.py の SystemController クラスに追加
+
+def get_direct_frame(self):
+    """フレームレート制限を無視して直接フレーム取得"""
+    if not self.is_initialized:
+        return None
+    
+    try:
+        camera_manager = self.system.camera_manager
+        
+        if config.USE_CAMERA:
+            # カメラから直接
+            if camera_manager.camera and camera_manager.camera.isOpened():
+                ret, frame = camera_manager.camera.read()
+                if ret and frame is not None:
+                    from models import CameraFrame
+                    return CameraFrame(
+                        image=frame,
+                        timestamp=datetime.now(),
+                        width=frame.shape[1],
+                        height=frame.shape[0],
+                        source="camera_direct"
+                    )
+        else:
+            # テスト画像から
+            if camera_manager.test_images:
+                frame = camera_manager.test_images[camera_manager.current_test_index].copy()
+                from models import CameraFrame
+                return CameraFrame(
+                    image=frame,
+                    timestamp=datetime.now(),
+                    width=frame.shape[1],
+                    height=frame.shape[0],
+                    source="test_image_direct"
+                )
+        
+        return None
+    except Exception as e:
+        logger.error(f"直接フレーム取得エラー: {e}")
+        return None
 
 # システムのグローバルインスタンス（シングルトン的な使用）
 _system_controller = None

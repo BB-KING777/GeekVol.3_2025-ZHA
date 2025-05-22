@@ -31,7 +31,7 @@ FRAME_RATE = 3
 # === Ollama API設定 ===
 OLLAMA_BASE_URL = "http://localhost:11434/api/chat"
 MODEL_NAME = "gemma3:4b"
-REQUEST_TIMEOUT = 30
+REQUEST_TIMEOUT = 300
 
 # === 人物認識設定 ===
 USE_FACE_RECOGNITION = True
