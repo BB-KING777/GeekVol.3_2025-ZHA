@@ -1,0 +1,23 @@
+2025-05-23 15:36:20,536 - face_recognition_advanced - WARNING - face_recognition ライブラリがインストールされていません
+2025-05-23 15:36:20,536 - face_recognition_advanced - INFO - インストール: pip install face-recognition
+2025-05-23 15:36:20,536 - face_recognition_module_updated - INFO - 高精度顔認識システムを初期化
+2025-05-23 15:36:22,477 - matplotlib.font_manager - INFO - Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Can not load face (unknown file format; error code 0x2)
+2025-05-23 15:36:23,409 - matplotlib.font_manager - INFO - generated new fontManager
+2025-05-23 15:36:23,985 - face_recognition_module_updated - INFO - MediaPipe顔認識を初期化
+2025-05-23 15:36:23,985 - face_recognition_module_updated - INFO - 顔認識システム 'mediapipe' を初期化
+2025-05-23 15:36:23,985 - face_recognition_module_updated - INFO - アクティブ顔認識: mediapipe
+2025-05-23 15:36:24,009 - face_recognition_module_updated - INFO - OpenCV Haar Cascade顔認識を初期化
+2025-05-23 15:36:24,010 - face_recognition_module_updated - INFO - 顔認識システム 'opencv_haar' を初期化
+2025-05-23 15:36:24,010 - face_recognition_module_updated - INFO - 顔認識システム 'none' を初期化
+2025-05-23 15:36:24,010 - face_recognition_module_updated - INFO - 既知の顔データベースなし
+2025-05-23 15:36:25,012 - audio_module - INFO - pyttsx3 音声エンジンが利用可能
+2025-05-23 15:36:25,012 - audio_module - INFO - 利用可能な音声方法: ['system', 'pyttsx3']
+2025-05-23 15:36:25,012 - audio_module - INFO - 音声管理システムを初期化
+2025-05-23 15:36:25,012 - api_client - INFO - Ollama APIクライアント初期化: http://localhost:11434/api/chat
+2025-05-23 15:36:25,012 - main_system - INFO - 訪問者認識システムを初期化（高精度顔認識対応）
+2025-05-23 15:36:25,016 - main_system - INFO - システム開始処理を実行中...
+2025-05-23 15:36:25,019 - audio_module - WARNING - システム音声コマンド失敗: espeak -v ja "システムの初期化を開始します"
+2025-05-23 15:36:25,019 - main_system - ERROR - システム開始エラー: module 'requests.exceptions' has no attribute 'ConnectError'
+2025-05-23 15:36:25,020 - audio_module - WARNING - システム音声コマンド失敗: festival --tts "システムの初期化を開始します"
+2025-05-23 15:36:25,021 - audio_module - WARNING - システム音声コマンド失敗: espeak -v ja "システム開始エラー: module \'requests.exceptions\' has no attribute \'ConnectError\'"
+2025-05-23 15:36:25,022 - audio_module - WARNING - システム音声コマンド失敗: festival --tts "システム開始エラー: module \'requests.exceptions\' has no attribute \'ConnectError\'"
