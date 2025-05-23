@@ -1,197 +1,171 @@
 # ZHA
 Assist By LLM
-# YOLO統合玄関訪問者認識システム
 
-視覚障害者や高齢者向けの玄関訪問者認識システムです。YOLOによる顔認識とOllamaによる詳細分析を組み合わせています。
+# 玄関訪問者認識システム
 
-## 🚀 主な機能
+視覚障害者および高齢者を対象とした、訪問者認識・説明支援システム。  
+深層学習に基づく顔認識（ResNet50）と、画像理解を行う大規模言語モデル（Gemma3）を統合し、訪問者の識別・特徴把握・音声通知を自動化する。
 
-- **YOLO顔認識**: 事前に登録した人物を自動認識
-- **Ollama詳細分析**: 未知の訪問者の特徴を詳細に説明（GPU加速）
+## 問題定義
+日本では、加齢に伴う視力の後天的低下が主な要因となり、視覚障害を抱える高齢者の数が年々増加している。
+高齢化の進展が続く日本において、この傾向は今後さらに顕著になると見込まれている。
+厚生労働省が公表した令和4年の統計によれば、視覚障害者全体のうち「70歳以上」の高齢者が占める割合は過半数に達しており、その人数は約16万人にのぼる。
+この傾向は高齢化が進む日本において今後ますます顕著になると見込まれている。
+
+こうした状況において、視覚障害者が日常生活の中で直面する困難のひとつが、「訪問者の識別」である。玄関先に現れた人物が誰であるかを把握することは、視覚障害者にとって容易ではなく、時に不安や危険を伴う。特に一人暮らしの高齢者にとって、訪問者の情報を瞬時に得る手段は限られている。　
+
+ZHAは、このような課題に対処するために開発された、訪問者認識支援システムである。
+
+## 主要機能
+
+- **顔認識（既知識別）**: 事前に登録した人物を自動認識
+- **人物特徴分析（未知識別）**: 未登録の訪問者に対して、年齢・服装・性別などを分析
 - **音声案内**: 分析結果を音声で案内
 - **リアルタイム映像**: Webブラウザでカメラ映像を確認
-- **自動判定**: 知っている人→即座に案内、知らない人→詳細分析
+- **エッジ実装**: 全ての機微データをエッジで処理
 
-## 📋 システム要件
+## 環境構築
 
-- Docker + Docker Compose
-- NVIDIA GPU (GPU加速用)
+### 1. 必要要件
+- Linux 環境（Ubuntu推奨）
+- NVIDIA GPU（CUDA対応）
 - Webカメラ
-- Linux環境推奨
+- スピーカ
 
-## 🔧 セットアップ
+### 2. セットアップ手順
+- Gitクローン起動
+- （Option）ユーザーの顔データ収集とResNet学習によるユーザ登録
+- アプリケーション起動
 
-### 1. リポジトリクローン
-```bash
-git clone <このリポジトリ>
-cd GeekCam
-```
+## 使用方法（利用者向け）
 
-### 2. Docker環境構築
-```bash
-# Docker Composeでシステム起動
-docker-compose up -d
+本システムはWebブラウザを通じて操作可能であり、以下の手順で利用する。
 
-# コンテナに入る
-docker exec -it geek_cam_yolo_system bash
-```
+1. ブラウザで http://localhost:8080 にアクセスする。
+2. 表示されるインターフェース上の **呼び鈴ボタン** を押すと、訪問者の認識処理が開始される。
+3. 処理結果は **リアルタイム映像** と音声ガイドによって出力される。
 
-### 3. YOLOモデル学習（初回のみ）
+### インターフェース構成
 
-#### 3-1. ユーザーデータ収集
-```bash
-# 顔データを収集（10秒間録画）
-python yolo_training.py record --user_id user_001 --duration 10
+- **呼び鈴ボタン**  
+  認識処理の開始トリガー。訪問者が来た際に押下する。
 
-# 複数ユーザーの場合
-python yolo_training.py record --user_id user_002 --duration 10
-```
+- **リアルタイム映像表示**  
+  カメラから取得した映像を即時表示。
 
-#### 3-2. モデル学習
-```bash
-# YOLO学習実行（30エポック）
-python yolo_training.py train --epochs 30
+- **設定パネル**  
+  閾値や使用モデル、カメラIDなどをGUIから変更可能。
 
-# より高精度にしたい場合
-python yolo_training.py train --epochs 100
-```
+---
 
-#### 3-3. テスト
-```bash
-# リアルタイム顔認識テスト
-python yolo_training.py test
-```
+## 動作フロー
 
-### 4. システム起動
-```bash
-# 統合システム起動
-python app.py
-```
+1. **呼び鈴が押される**  
+　ユーザーまたは訪問者がインターフェース上のボタンを押下する。
 
-## 🎯 使用方法
+2. **顔認識処理を実行**  
+　事前に登録された顔画像と照合し、訪問者が既知か未知かを判定する。
 
-### Webインターフェース
-ブラウザで `http://localhost:8080` にアクセス
+   - **既知の訪問者**  
+     - 認識結果に基づき、「○○さんがいらっしゃいました」と音声出力。
+     - 映像とともに識別結果がWeb UIに表示され、処理は終了する。
 
-- **呼び鈴ボタン**: 訪問者の確認を開始
-- **リアルタイム映像**: カメラの現在の状況を確認
-- **設定パネル**: システムパラメータの調整
+   - **未知の訪問者**  
+     - 次のステップへ遷移。
 
-### 動作フロー
-1. 呼び鈴ボタンを押す
-2. **YOLO判定**: 登録済みユーザーかチェック
-   - **既知の人**: 「○○さんがいらっしゃいました」→終了
-   - **未知の人**: 次のステップへ
-3. **Ollama分析**: 詳細な人物分析を実行
-   - 性別・年齢・服装・職業などを分析
-   - 「未知の訪問者です。30代男性、黒いスーツ、ブリーフケース所持...」
+3. **外見特徴分析処理を実行**  
+　Gemma3を用いて、カメラ映像から以下のような特徴を抽出・要約する。
 
-## ⚙️ 設定
+   - 性別・年齢推定
+   - 服装の色や形状
+   - 所持品や職業風の外観
 
-### config.py
-```python
-# YOLO設定
-YOLO_MODEL_PATH = "runs/train_yolov11/face_identifier/weights/best.pt"
-YOLO_CONFIDENCE_THRESHOLD = 0.7
-USE_FACE_DETECTION = True
+4. **結果を音声で通知**  
+　「未知の訪問者です。30代の男性、黒いスーツを着用、ブリーフケースを所持しています」といった形式で、リアルタイム音声通知を行う。
 
-# Ollama設定
-API_BASE_URL = "http://localhost:11434/api/chat"
-MODEL_NAME = "gemma3:4b"
-OLLAMA_GPU_LAYERS = -1  # GPU使用
+## ディレクトリ構造
 
-# カメラ設定
-USE_CAMERA = True
-CAMERA_ID = "/dev/video0"
-```
-
-## 📂 ディレクトリ構造
-
-```
 GeekCam/
-├── app.py                 # メインアプリケーション
-├── face_detector.py       # YOLO顔認識モジュール
-├── config.py             # システム設定
-├── yolo_training.py      # YOLO学習統合スクリプト
-├── model/               # 基本モデル
-│   ├── yolo11n.pt
-│   └── yolov11n-face.pt
-├── runs/                # 学習済みモデル
-│   └── face_identifier/
-├── dataset/             # 学習用データセット
-├── faces/              # 抽出した顔画像
-└── captures/           # キャプチャ画像
-```
-
-## 🔍 トラブルシューティング
-
-### YOLOモデルが見つからない
-```bash
-# モデル学習を実行
-python yolo_training.py record --user_id your_name
-python yolo_training.py train
-```
-
-### カメラが認識されない
-```bash
-# カメラデバイス確認
-ls /dev/video*
-# config.pyのCAMERA_IDを調整
-```
-
-### GPU使用できない
-```bash
-# NVIDIA Docker確認
-nvidia-smi
-docker run --gpus all nvidia/cuda:11.0-base nvidia-smi
-```
-
-### Ollamaモデルエラー
-```bash
-# モデル再ダウンロード
-ollama pull gemma3:4b
-```
-
-## 🎛️ APIエンドポイント
-
-- `GET /` - Web UI
-- `GET /video_feed` - カメラストリーム
-- `POST /api/doorbell` - 呼び鈴処理
-- `GET /api/status` - システム状態
-- `POST /api/speak` - 音声出力
-- `POST/GET /api/config` - 設定変更
-
-## 🔄 システム更新
-
-### 新しいユーザー追加
-```bash
-# 新ユーザーのデータ収集
-python yolo_training.py record --user_id new_user --duration 15
-
-# data.yamlに手動でユーザー追加後、再学習
-python yolo_training.py train --epochs 50
-```
-
-### モデル精度向上
-- より長時間の録画（`--duration 20`）
-- より多くのエポック（`--epochs 100`）
-- 異なる照明条件でのデータ収集
-
-## 📊 パフォーマンス
-
-- **YOLO認識**: ~50ms（GPU使用時）
-- **Ollama分析**: ~3-5秒（GPU使用時）
-- **総処理時間**: 既知ユーザー1秒未満、未知ユーザー5秒程度
+├── Venv_version/                    # 仮想環境版（メインシステム）
+│   ├── 設定・セットアップファイル
+│   ├── config.py                    # システム設定（Linux用）
+│   ├── config_emergency.py         # 緊急用設定（カメラ問題対応版）
+│   ├── setup.py                    # 基本セットアップスクリプト
+│   ├── windows_setup.py            # Windows専用セットアップ
+│   ├── advanced_face_setup.py      # 高精度顔認識セットアップ
+│   ├── linux_setup_fix.sh          # Linux環境修正スクリプト
+│   │
+│   ├── コアシステムファイル
+│   ├── main.py                      # メインランチャー
+│   ├── main_system.py               # メインシステム（高精度顔認識統合版）
+│   ├── main_system_complete_fix.py  # 完全修正版メインシステム
+│   ├── web_app.py                   # Webインターフェース（Flask）
+│   │
+│   ├── コアモジュール
+│   ├── models.py                    # データモデル
+│   ├── camera_module.py             # カメラ管理モジュール
+│   ├── audio_module.py              # 音声出力モジュール
+│   ├── api_client.py                # API通信モジュール（Ollama）
+│   │
+│   ├── 顔認識システム
+│   ├── face_recognition_module_updated.py  # 顔認識モジュール（統合版）
+│   ├── face_recognition_advanced.py        # 高精度顔認識システム
+│   ├── face_manager.py              # 顔認識管理ツール
+│   │
+│   ├── ユーティリティ・修正ツール
+│   ├── fix_compatibility.py        # NumPy/OpenCV 互換性修正
+│   ├── debug_camera_fix.py         # カメラ問題診断・修正
+│   ├── debug_analize.py            # フレーム取得問題診断
+│   ├── apply_fixes.py              # 修正版ファイル適用スクリプト
+│   │
+│   ├── 依存関係管理
+│   ├── requirements.txt            # 基本依存関係
+│   ├── requirements_fixed.txt      # 互換性修正版
+│   ├── requirements_advanced_face.txt  # 高精度顔認識用
+│   │
+│   ├── 起動スクリプト
+│   ├── start_system.bat           # Windows用起動スクリプト
+│   ├── start_system.sh            # Linux用起動スクリプト
+│   ├── test_system.bat            # Windows用テストスクリプト
+│   ├── test_system.sh             # Linux用テストスクリプト
+│   │
+│   ├── ドキュメント
+│   ├── README.md                   # 使用方法
+│   ├── QUICK_START_ADVANCED_FACE.md  # 高精度顔認識ガイド
+│   │
+│   ├── データディレクトリ（自動生成）
+│   ├── data/
+│   │   ├── captures/               # 分析結果画像保存
+│   │   ├── test_images/            # テスト用画像
+│   │   ├── logs/                   # システムログファイル
+│   │   ├── registration_photos/    # 登録用写真
+│   │   │   └── [person_id]/        # 人物別フォルダ
+│   │   ├── registration_videos/    # 登録用動画
+│   │   │   └── [person_id]/        # 人物別フォルダ
+│   │   ├── face_database.db        # SQLite顔認識データベース
+│   │   ├── face_encodings.pkl      # 顔エンコーディングファイル
+│   │   └── known_faces.json        # 既知の顔データ（下位互換）
+│   │
+│   ├── 仮想環境（自動生成）
+│   ├── venv/                       # Python仮想環境
+│   │   ├── Scripts/                # Windows用実行ファイル
+│   │   │   ├── python.exe
+│   │   │   ├── pip.exe
+│   │   │   └── activate.bat
+│   │   ├── bin/                    # Linux/macOS用実行ファイル
+│   │   │   ├── python
+│   │   │   ├── pip
+│   │   │   └── activate
+│   │   └── Lib/                    # インストールされたライブラリ
+│   │
+│   └── バックアップ（自動生成）
+│       └── backup_[timestamp]/     # ファイル修正時のバックアップ
+│
+├── 📄 プロジェクトルートファイル
+└── readme.md                       # 全体像
 
 ## 🔒 プライバシー
 
 - すべての処理はローカルで実行
 - 顔データは暗号化されてローカル保存
 - 外部への通信は行わない
-
-## 🆘 サポート
-
-問題が発生した場合：
-1. ログの確認: `docker logs geek_cam_yolo_system`
-2. システム再起動: `docker-compose restart`
-3. 完全リセット: `docker-compose down && docker-compose up -d`

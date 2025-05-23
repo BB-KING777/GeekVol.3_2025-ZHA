@@ -1,18 +1,7 @@
 # 訪問者認識システム
-
-視覚障害者・高齢者向けの AI powered 玄関訪問者認識システムです。
-
-## 機能
-
-- **リアルタイム映像監視**: Webカメラまたはテスト画像での動作
-- **AI画像分析**: Ollama を使用した訪問者の特徴分析
-- **顔認識**: MediaPipe/OpenCV による顔検出
-- **音声出力**: OS標準またはpyttsx3による読み上げ
-- **Webインターフェース**: ブラウザから操作可能
-
 ## 必要環境
 
-- Python 3.8以上
+- Python 3.8以上(3.12以上ではエラー発生)
 - Ollama (AI分析用)
 - Webカメラ (オプション)
 
@@ -25,10 +14,17 @@
 
 2. Ollama インストール・起動:
    ```bash
-   # Ollama公式サイトからダウンロード・インストール
+   curl -fsSL https://ollama.com/install.sh | sh
    ollama pull gemma3:4b
    ollama serve
    ```
+
+3. 権限の付与:
+
+### macOS/Linux  
+```bash
+chmod +x start_system.sh
+```
 
 ## 使用方法
 
@@ -74,5 +70,4 @@ python web_app.py
 - モデル確認: `ollama list`
 
 ## ライセンス
-
 MIT License
