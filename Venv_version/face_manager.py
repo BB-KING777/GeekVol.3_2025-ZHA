@@ -8,7 +8,9 @@ import json
 import cv2
 import time
 import threading
+import numpy as np
 from datetime import datetime
+from typing import List, Tuple, Optional
 
 # プロジェクトルートをパスに追加
 sys.path.insert(0, str(Path(__file__).parent))
