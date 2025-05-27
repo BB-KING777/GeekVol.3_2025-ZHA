@@ -3,6 +3,8 @@ Assist By LLM
 
 <img src="https://img.shields.io/badge/-Python-F9DC3E.svg?logo=python&style=flat">  <img src="https://img.shields.io/badge/-Ubuntu-6F52B5.svg?logo=ubuntu&style=flat">  <img src="https://img.shields.io/badge/-Visual%20Studio%20Code-007ACC.svg?logo=visual-studio-code&style=flat">  <img src="https://img.shields.io/badge/技育CAMPハッカソン-2025_Vol 3-green.svg">　<img src="https://img.shields.io/badge/-Jetson%20Orin%20Nano-000000.svg?logo=nvidia&style=flat">　<img src="https://img.shields.io/badge/-Flask-000000.svg?logo=flask&style=flat">
 
+https://docs.google.com/presentation/d/1gM3ND6sigPnlieWhnqImL8wjO0y0j1SOVT2rxibP3Q4/edit?usp=sharing
+
 
 # 玄関訪問者認識システム
 
